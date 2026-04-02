@@ -4,7 +4,7 @@ compatibility_date = "2026-04-01"
 workers_dev = true
 
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["* * * * *"]
 
 [[kv_namespaces]]
 binding = "ARTEMIS_KV"
@@ -16,4 +16,4 @@ class_name = "DsnPoller"
 
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["DsnPoller"]
+new_classes = ["DsnPoller"]

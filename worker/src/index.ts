@@ -6,7 +6,7 @@
  *   2. JPL Horizons API (~1min) — full state vectors
  *   3. KV cache — last known good
  *
- * Cron: every 5 min (CF free tier minimum)
+ * Cron: every 1 min (Horizons responds in ~300ms)
  * GET /position — returns latest cached position
  * GET /dsn — returns raw DSN status for EM2
  * GET /health — liveness check
@@ -37,19 +37,23 @@ export class DsnPoller implements DurableObject {
   }
 
   async alarm(): Promise<void> {
+    let delay = 5000;
     try {
       const dsn = await fetchDSN();
       if (dsn && dsn.rangeKm > 0) {
-        // Store DSN snapshot in KV (fast reads for all edge locations)
         await this.env.ARTEMIS_KV.put("dsn", JSON.stringify({
           ...dsn,
           timestamp: new Date().toISOString(),
         }), { expirationTtl: 30 });
       }
-    } catch {}
+    } catch {
+      // Backoff on failure: 15s → 30s → 60s, capped
+      const fails = ((await this.state.storage.get<number>("fails")) ?? 0) + 1;
+      await this.state.storage.put("fails", fails);
+      delay = Math.min(60_000, 5000 * Math.pow(2, fails));
+    }
 
-    // Re-arm alarm: 5 seconds
-    await this.state.storage.setAlarm(Date.now() + 5000);
+    await this.state.storage.setAlarm(Date.now() + delay);
   }
 }
 
@@ -184,7 +188,7 @@ async function fetchHorizons(): Promise<HorizonsData | null> {
   const speed = Math.sqrt(orion.vx ** 2 + orion.vy ** 2 + orion.vz ** 2);
 
   // Real Moon distance from actual Moon position (not hardcoded 384,400)
-  let distMoon = EARTH_MOON_KM - distEarth; // fallback
+  let distMoon = Math.max(0, EARTH_MOON_KM - distEarth); // fallback
   if (moonRes.ok) {
     const moonData = (await moonRes.json()) as { result: string; error?: string };
     if (!moonData.error) {
@@ -300,9 +304,9 @@ export default {
       let pos = posRaw;
       if (!pos) pos = await updatePosition(env);
 
-      // Ensure DO poller is running
+      // Ensure DO poller is running (idempotent — only sets alarm if none exists)
       const pollerId = env.POLLER.idFromName("artemis2");
-      env.POLLER.get(pollerId).fetch(new Request("https://internal/start")).catch(() => {});
+      if (!posRaw) env.POLLER.get(pollerId).fetch(new Request("https://internal/start")).catch(() => {});
 
       // Override with fresher DSN range
       if (dsnRaw && dsnRaw.rangeKm > 0) {

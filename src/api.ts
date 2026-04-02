@@ -137,13 +137,18 @@ function interpolate(data: ArtemisPosition): ArtemisPosition {
   const dt = Math.min(dataAge, 600);
   const dKm = data.velocityKmS * dt;
 
-  // During outbound: distance from Earth grows, Moon shrinks
-  const outbound = data.phase === "transit_to_moon" || data.phase === "earth_orbit";
+  // Only interpolate distance during phases with clear radial direction
+  // earth_orbit: circling at ~constant distance, lunar_flyby: direction reverses
+  if (data.phase === "earth_orbit" || data.phase === "lunar_flyby") {
+    return { ...data, missionElapsedMs: Math.max(0, now - LAUNCH_EPOCH) };
+  }
+
+  const outbound = data.phase === "transit_to_moon";
   const sign = outbound ? 1 : -1;
 
   return {
     ...data,
-    distanceEarthKm: Math.round(data.distanceEarthKm + sign * dKm),
+    distanceEarthKm: Math.max(0, Math.round(data.distanceEarthKm + sign * dKm)),
     distanceMoonKm: Math.max(0, Math.round(data.distanceMoonKm - sign * dKm)),
     missionElapsedMs: Math.max(0, now - LAUNCH_EPOCH),
   };

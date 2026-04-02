@@ -17,8 +17,9 @@ function getMoonPhaseEmoji(): string {
   const daysSince = (now.getTime() - knownNew) / 86_400_000;
   const phase = ((daysSince % synodicMonth) + synodicMonth) % synodicMonth;
 
-  // 8 phases, ~3.7 days each
-  const phaseIndex = Math.floor((phase / synodicMonth) * 8) % 8;
+  // 8 phases, ~3.7 days each. Round to nearest phase (not floor)
+  // so we show 🌕 when within ~1.8 days of full
+  const phaseIndex = Math.round((phase / synodicMonth) * 8) % 8;
   const emojis = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
   return emojis[phaseIndex]!;
 }

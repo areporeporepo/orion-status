@@ -8,6 +8,9 @@ jobs:
   track:
     runs-on: ubuntu-latest
     steps:
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+
       - name: Grab frame from NASA livestream
         run: |
           yt-dlp -f "worst" --no-part -o "/tmp/frame.%(ext)s" \

@@ -11,17 +11,6 @@
 npm i -g orion-status
 ```
 
-### Claude Code status line
-
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "echo '{\"unused\":true}' | npx orion-status"
-  }
-}
-```
-
 ## Architecture
 
 ```

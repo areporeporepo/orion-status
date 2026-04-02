@@ -6,9 +6,8 @@ Set Width 1660
 Set Height 60
 Set Padding 12
 Set Framerate 30
-Set PlaybackSpeed 1.5
-Set TypingSpeed 20ms
+Set PlaybackSpeed 1
 
-Type "bash docs/demo-loop.sh"
+Type "node --experimental-strip-types docs/demo-sim.ts"
 Enter
-Sleep 16s
+Sleep 14s

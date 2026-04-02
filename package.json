@@ -14,9 +14,21 @@
   "files": [
     "dist/"
   ],
-  "keywords": ["artemis", "nasa", "space", "tracker", "claude-code", "statusline", "cli"],
+  "keywords": [
+    "artemis",
+    "nasa",
+    "space",
+    "tracker",
+    "claude-code",
+    "statusline",
+    "cli"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^6.0.2"
   }
 }

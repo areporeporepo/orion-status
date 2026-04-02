@@ -43,10 +43,32 @@ export class DsnPoller implements DurableObject {
     await this.state.storage.put("tick", tick);
 
     try {
+      // DSN every 5th tick (5s) — matches NASA's exact refresh rate
+      let latestDsn: DsnTarget | null = null;
+      if (tick % 5 === 0) {
+        latestDsn = await fetchDSN();
+        if (latestDsn && latestDsn.rangeKm > 0) {
+          await this.env.ARTEMIS_KV.put("dsn", JSON.stringify({
+            ...latestDsn,
+            timestamp: new Date().toISOString(),
+          }), { expirationTtl: 30 });
+        }
+      }
+
       // Horizons every tick (1s) — sequential, stays under concurrency limit
       const horizons = await fetchHorizons();
       if (horizons) {
         const met = Math.max(0, Date.now() - LAUNCH_TIME.getTime());
+
+        // Merge DSN metadata if available (from this tick or KV)
+        let source = "Horizons";
+        let dsnInfo: Position["dsn"] | undefined;
+        const dsn = latestDsn ?? await this.env.ARTEMIS_KV.get("dsn", "json") as (DsnTarget & { timestamp: string }) | null;
+        if (dsn && dsn.rangeKm > 0) {
+          source = `Horizons + DSN ${dsn.station}`;
+          dsnInfo = { station: dsn.station, dish: dsn.dish, signalDbm: dsn.signalDbm, dataRateKbps: dsn.dataRateKbps };
+        }
+
         const pos: Position = {
           distanceEarthKm: horizons.distanceEarthKm,
           distanceMoonKm: horizons.distanceMoonKm,
@@ -55,20 +77,10 @@ export class DsnPoller implements DurableObject {
           phase: detectPhase(met, horizons.distanceEarthKm, horizons.distanceMoonKm),
           timestamp: new Date().toISOString(),
           crew: CREW,
-          source: "Horizons",
+          source,
+          dsn: dsnInfo,
         };
         await this.env.ARTEMIS_KV.put("position", JSON.stringify(pos), { expirationTtl: 60 });
-      }
-
-      // DSN every 5th tick (5s) — matches NASA's exact refresh rate
-      if (tick % 5 === 0) {
-        const dsn = await fetchDSN();
-        if (dsn && dsn.rangeKm > 0) {
-          await this.env.ARTEMIS_KV.put("dsn", JSON.stringify({
-            ...dsn,
-            timestamp: new Date().toISOString(),
-          }), { expirationTtl: 30 });
-        }
       }
 
       // Reset fail counter on success

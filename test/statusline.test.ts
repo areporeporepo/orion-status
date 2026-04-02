@@ -15,31 +15,31 @@ const mockPosition: ArtemisPosition = {
 };
 
 describe("statusline renderer", () => {
-  it("renders multi-line output", () => {
+  it("renders exactly 2 lines", () => {
     const output = renderStatusline(mockPosition, 0);
     const lines = output.split("\n");
-    assert.ok(lines.length >= 6, `expected 6+ lines, got ${lines.length}`);
+    assert.equal(lines.length, 2);
   });
   it("includes distance from Earth", () => {
     const output = renderStatusline(mockPosition, 0);
     assert.ok(output.includes("148,302"));
   });
-  it("includes crew names", () => {
+  it("includes Orion rocket emoji", () => {
     const output = renderStatusline(mockPosition, 0);
-    assert.ok(output.includes("Wiseman"));
-    assert.ok(output.includes("Hansen"));
-  });
-  it("includes Orion label", () => {
-    const output = renderStatusline(mockPosition, 0);
-    assert.ok(output.includes("Orion"));
+    assert.ok(output.includes("🚀"));
   });
   it("includes mission elapsed time", () => {
     const output = renderStatusline(mockPosition, 0);
     assert.ok(output.includes("2h 14m"));
   });
+  it("includes trajectory bar with Earth and Moon", () => {
+    const output = renderStatusline(mockPosition, 0);
+    assert.ok(output.includes("🌍"));
+    assert.ok(output.includes("🌑"));
+  });
   it("shows stale indicator when data is stale", () => {
     const stale = { ...mockPosition, stale: true };
     const output = renderStatusline(stale, 0);
-    assert.ok(output.includes("stale") || output.includes("\x1b[2m"));
+    assert.ok(output.includes("~"));
   });
 });

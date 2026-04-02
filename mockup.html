@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artemis Track — Companion Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d1117;
+    --bg-surface: #161b22;
+    --bg-raised: #1c2129;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #7d8590;
+    --text-muted: #484f58;
+    --cyan: #79c0ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --orange: #e3b341;
+    --blue: #58a6ff;
+    --purple: #bc8cff;
+    --red: #f85149;
+    --white: #f0f6fc;
+    --orion-gold: #e3b341;
+    --earth-blue: #58a6ff;
+    --moon-silver: #8b949e;
+    --thrust-orange: #f0883e;
+  }
+
+  body {
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 60px;
+  }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  h1 span { color: var(--orion-gold); }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  /* ─── Terminal Window ─── */
+  .terminal {
+    width: 100%;
+    max-width: 960px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  .terminal-titlebar {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terminal-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .terminal-dot.red { background: #ff5f57; }
+  .terminal-dot.yellow { background: #febc2e; }
+  .terminal-dot.green { background: #28c840; }
+
+  .terminal-title {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .terminal-body {
+    padding: 20px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* ─── Chat area (faux Claude conversation) ─── */
+  .chat-area {
+    margin-bottom: 20px;
+  }
+
+  .chat-line {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .chat-line .prompt { color: var(--green); }
+  .chat-line .response { color: var(--text); opacity: 0.5; }
+
+  /* ─── Companion + Input Area ─── */
+  .input-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+  }
+
+  .input-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-prompt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .input-prompt .chevron { color: var(--cyan); }
+  .input-prompt .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--text);
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* ─── Companion Sprite (right side) ─── */
+  .companion-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 8px;
+    position: relative;
+  }
+
+  .speech-bubble {
+    border: 1px solid var(--cyan);
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    font-size: 12px;
+    position: relative;
+    background: rgba(121, 192, 255, 0.04);
+  }
+
+  .speech-bubble .data-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .speech-bubble .distance { color: var(--orion-gold); font-weight: 600; }
+  .speech-bubble .velocity { color: var(--cyan); }
+  .speech-bubble .met { color: var(--text-dim); }
+  .speech-bubble .phase { color: var(--green); font-size: 11px; }
+
+  .bubble-tail {
+    text-align: right;
+    color: var(--cyan);
+    font-size: 12px;
+    padding-right: 20px;
+    margin-bottom: -2px;
+  }
+
+  .sprite-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .sprite {
+    font-size: 13px;
+    line-height: 1.3;
+    white-space: pre;
+    color: var(--text);
+    text-align: center;
+    position: relative;
+  }
+
+  .sprite .hull { color: var(--white); }
+  .sprite .window { color: var(--cyan); }
+  .sprite .window-lit { color: var(--orion-gold); }
+  .sprite .shield { color: var(--text-dim); }
+  .sprite .thruster { color: var(--thrust-orange); }
+  .sprite .exhaust { color: var(--yellow); opacity: 0.6; }
+  .sprite .particle { color: var(--thrust-orange); opacity: 0.4; }
+  .sprite .name-label {
+    font-size: 11px;
+    color: var(--orion-gold);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .trajectory-bar {
+    font-size: 12px;
+    white-space: pre;
+    margin-left: 4px;
+  }
+
+  .trajectory-bar .earth { color: var(--earth-blue); }
+  .trajectory-bar .moon { color: var(--moon-silver); }
+  .trajectory-bar .path { color: var(--text-muted); }
+  .trajectory-bar .position { color: var(--orion-gold); font-weight: 700; }
+  .trajectory-bar .crew {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* ─── Status Bar ─── */
+  .statusbar {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border);
+    padding: 6px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .statusbar .model { color: var(--green); }
+  .statusbar .context-bar {
+    display: inline-flex;
+    gap: 2px;
+  }
+  .statusbar .ctx-filled { color: var(--green); }
+  .statusbar .ctx-empty { color: var(--text-muted); }
+
+  /* ─── Sprite Frames Display ─── */
+  .frames-display {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .frames-row {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .frame-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    text-align: center;
+    min-width: 180px;
+  }
+
+  .frame-card .frame-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .frame-card pre {
+    font-size: 14px;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  /* ─── Animation Preview ─── */
+  .animation-preview {
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .anim-terminal {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .anim-body {
+    padding: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    min-height: 200px;
+  }
+
+  .anim-sprite {
+    font-size: 15px;
+    line-height: 1.35;
+    white-space: pre;
+    text-align: center;
+  }
+
+  /* ─── Phases ─── */
+  .phases-grid {
+    width: 100%;
+    max-width: 960px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .phase-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+
+  .phase-card .phase-name {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .phase-card .phase-name.orbit { color: var(--earth-blue); }
+  .phase-card .phase-name.transit { color: var(--orion-gold); }
+  .phase-card .phase-name.flyby { color: var(--moon-silver); }
+  .phase-card .phase-name.return { color: var(--green); }
+
+  .phase-card pre {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--text-dim);
+  }
+
+  .phase-card pre .highlight { color: var(--orion-gold); }
+</style>
+</head>
+<body>
+
+<h1>artemis-track <span>◆</span> companion mockup</h1>
+
+<!-- ═══ SECTION: Full Terminal Mockup ═══ -->
+<div style="width:100%;max-width:960px;">
+  <div class="section-label">Full terminal integration</div>
+  <div class="terminal">
+    <div class="terminal-titlebar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <div class="terminal-title">claude — ~/projects/my-app</div>
+    </div>
+    <div class="terminal-body">
+      <div class="chat-area">
+        <div class="chat-line"><span class="response">  I've updated the API endpoint to handle pagination. The changes are in</span></div>
+        <div class="chat-line"><span class="response">  <span style="color:var(--cyan)">src/api/users.ts</span> and <span style="color:var(--cyan)">src/types/pagination.ts</span>.</span></div>
+        <div class="chat-line" style="height:16px"></div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-left">
+          <div class="input-prompt">
+            <span class="chevron">❯</span>
+            <span class="cursor"></span>
+          </div>
+        </div>
+        <div class="companion-area">
+          <div class="speech-bubble">
+            <div class="data-row">
+              <span class="distance">148,302 km</span>
+              <span class="velocity">2.3 km/s</span>
+              <span class="met">MET 2h 14m</span>
+            </div>
+            <div class="data-row" style="margin-top:2px;">
+              <span class="phase">▸ lunar transit</span>
+            </div>
+          </div>
+          <div class="bubble-tail">╲</div>
+          <div class="sprite-container">
+            <div class="sprite">
+<span class="hull">   /\</span>
+<span class="hull">  /</span><span class="window">○○</span><span class="hull">\</span>
+<span class="hull"> |</span><span class="shield">_**_</span><span class="hull">|</span>
+<span class="thruster">  ⊿⊿⊿⊿</span>
+<div class="name-label">Orion</div>
+            </div>
+            <div class="trajectory-bar">
+<span class="earth">🌍</span><span class="path"> ······</span><span class="position">•</span><span class="path">·················· </span><span class="moon">🌑</span>
+<div class="crew">Wiseman · Glover · Koch · Hansen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="statusbar">
+      <div>
+        <span class="model">Opus 4.6 (1M context)</span>
+        <span> · </span>
+        <span class="context-bar">
+          <span class="ctx-filled">█</span><span class="ctx-empty">░░░░░░░░░</span>
+        </span>
+        <span> 6%</span>
+        <span> · $0.42 · 5m 12s</span>
+      </div>
+      <div>bypass permissions on</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: Sprite Frames ═══ -->
+<div class="frames-display">
+  <div class="section-label">Sprite animation frames</div>
+  <div class="frames-row">
+    <div class="frame-card">
+      <div class="frame-label">Frame 0 · idle</div>
+      <pre>
+<span style="color:var(--text-muted)">            </span>
+<span style="color:var(--white)">   /\       </span>
+<span style="color:var(--white)">  /</span><span style="color:var(--cyan)">○○</span><span style="color:var(--white)">\     </span>
+<span style="color:var(--white)"> |</span><span style="color:var(--text-dim)">_**_</span><span style="color:var(--white)">|    </span>
+<span style="color:var(--thrust-orange)">  ⊿⊿⊿⊿     </span>
+      </pre>
+    </div>
+    <div class="frame-card">
+      <div class="frame-label">Frame 1 · thrust</div>
+      <pre>
+<span style="color:var(--text-muted)">            </span>
+<span style="color:var(--white)">   /\       </span>
+<span style="color:var(--white)">  /</span><span style="color:var(--orion-gold)">●●</span><span style="color:var(--white)">\     </span>
+<span style="color:var(--white)"> |</span><span style="color:var(--text-dim)">_**_</span><span style="color:var(--white)">|    </span>
+<span style="color:var(--thrust-orange)">  ⊿⊿⊿⊿</span><span style="color:var(--yellow);opacity:0.6">~   </span>
+      </pre>
+    </div>
+    <div class="frame-card">
+      <div class="frame-label">Frame 2 · boost</div>
+      <pre>
+<span style="color:var(--thrust-orange);opacity:0.4">   ~ ~      </span>
+<span style="color:var(--white)">   /\       </span>
+<span style="color:var(--white)">  /</span><span style="color:var(--cyan)">○○</span><span style="color:var(--white)">\     </span>
+<span style="color:var(--white)"> |</span><span style="color:var(--text-dim)">_**_</span><span style="color:var(--white)">|    </span>
+<span style="color:var(--thrust-orange)"> ~⊿⊿⊿⊿</span><span style="color:var(--yellow);opacity:0.6">~   </span>
+      </pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: Mission Phases ═══ -->
+<div style="width:100%;max-width:960px;">
+  <div class="section-label">Trajectory bar · mission phases</div>
+  <div class="phases-grid">
+    <div class="phase-card">
+      <div class="phase-name orbit">Earth Orbit</div>
+      <pre><span style="color:var(--earth-blue)">🌍</span><span style="color:var(--orion-gold)">•</span><span style="color:var(--text-muted)">··························· </span><span style="color:var(--moon-silver)">🌑</span>
+<span style="color:var(--text-dim)">↑ 200 km · orbit raising</span></pre>
+    </div>
+    <div class="phase-card">
+      <div class="phase-name transit">Lunar Transit</div>
+      <pre><span style="color:var(--earth-blue)">🌍</span><span style="color:var(--text-muted)"> ······</span><span style="color:var(--orion-gold)">•</span><span style="color:var(--text-muted)">···················· </span><span style="color:var(--moon-silver)">🌑</span>
+<span style="color:var(--text-dim)">       ↑ 148,302 km</span></pre>
+    </div>
+    <div class="phase-card">
+      <div class="phase-name flyby">Lunar Flyby</div>
+      <pre><span style="color:var(--earth-blue)">🌍</span><span style="color:var(--text-muted)"> ··························</span><span style="color:var(--orion-gold)">•</span><span style="color:var(--moon-silver)">🌑</span>
+<span style="color:var(--text-dim)">                      252,000 km ↑</span></pre>
+    </div>
+    <div class="phase-card">
+      <div class="phase-name return">Return</div>
+      <pre><span style="color:var(--earth-blue)">🌍</span><span style="color:var(--text-muted)"> ·············</span><span style="color:var(--orion-gold)">•</span><span style="color:var(--text-muted)">············ </span><span style="color:var(--moon-silver)">🌑</span>
+<span style="color:var(--text-dim)">              ↑ heading home</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: Animated Preview ═══ -->
+<div class="animation-preview">
+  <div class="section-label">Live animation preview</div>
+  <div class="anim-terminal">
+    <div class="terminal-titlebar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <div class="terminal-title">artemis-track — live</div>
+    </div>
+    <div class="anim-body">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;">
+        <div class="speech-bubble" style="margin-bottom:4px;">
+          <div class="data-row">
+            <span class="distance" id="anim-distance">148,302 km</span>
+            <span class="velocity" id="anim-velocity">2.3 km/s</span>
+            <span class="met" id="anim-met">MET 2h 14m</span>
+          </div>
+          <div class="data-row" style="margin-top:2px;">
+            <span class="phase">▸ lunar transit</span>
+          </div>
+        </div>
+        <div class="bubble-tail">╲</div>
+        <div style="display:flex;align-items:flex-end;gap:20px;">
+          <div class="anim-sprite" id="anim-sprite"></div>
+          <div style="font-size:13px;white-space:pre;margin-bottom:8px;">
+            <span id="anim-trajectory"></span>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">Wiseman · Glover · Koch · Hansen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: Standalone TUI ═══ -->
+<div style="width:100%;max-width:960px;">
+  <div class="section-label">Standalone TUI mode · npx artemis-track --tui</div>
+  <div class="terminal">
+    <div class="terminal-titlebar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <div class="terminal-title">artemis-track --tui</div>
+    </div>
+    <div style="padding:24px;font-size:13px;line-height:1.6;">
+      <pre style="color:var(--text-dim);margin:0;">
+<span style="color:var(--orion-gold)">  ╔═══════════════════════════════════════════════════════╗</span>
+<span style="color:var(--orion-gold)">  ║</span>          <span style="color:var(--white);font-weight:600;letter-spacing:2px;">A R T E M I S   I I   T R A C K E R</span>          <span style="color:var(--orion-gold)">║</span>
+<span style="color:var(--orion-gold)">  ╚═══════════════════════════════════════════════════════╝</span>
+
+   <span style="color:var(--earth-blue)">🌍</span> Earth <span style="color:var(--text-muted)">··········</span><span style="color:var(--orion-gold);font-weight:700;">•</span><span style="color:var(--text-muted)">·························</span> <span style="color:var(--moon-silver)">🌑</span> Moon
+                     <span style="color:var(--orion-gold)">↑</span> <span style="color:var(--text-dim)">Orion</span>
+
+   <span style="color:var(--text-dim)">Distance from Earth:</span>  <span style="color:var(--orion-gold)">148,302 km</span>
+   <span style="color:var(--text-dim)">Distance from Moon:</span>   <span style="color:var(--cyan)">236,891 km</span>
+   <span style="color:var(--text-dim)">Velocity:</span>             <span style="color:var(--green)">2.34 km/s</span>
+   <span style="color:var(--text-dim)">Mission Elapsed:</span>      <span style="color:var(--white)">2h 14m 33s</span>
+   <span style="color:var(--text-dim)">Phase:</span>                <span style="color:var(--green)">Lunar Transit</span>
+
+   <span style="color:var(--text-dim)">Crew:</span> <span style="color:var(--white)">Reid Wiseman</span> <span style="color:var(--text-muted)">(CDR)</span> · <span style="color:var(--white)">Victor Glover</span> <span style="color:var(--text-muted)">(PLT)</span>
+         <span style="color:var(--white)">Christina Koch</span> <span style="color:var(--text-muted)">(MS)</span> · <span style="color:var(--white)">Jeremy Hansen</span> <span style="color:var(--text-muted)">(MS)</span>
+
+   <span style="color:var(--text-muted)">   /\</span>
+   <span style="color:var(--text-muted)">  /</span><span style="color:var(--cyan)">○○</span><span style="color:var(--text-muted)">\     Data: NASA AROW · Updated 12s ago</span>
+   <span style="color:var(--text-muted)"> |</span><span style="color:var(--text-dim)">_**_</span><span style="color:var(--text-muted)">|</span>
+   <span style="color:var(--thrust-orange)">  ⊿⊿⊿⊿</span>
+      </pre>
+    </div>
+  </div>
+</div>
+
+<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:20px;">
+  artemis-track · companion mockup · april 2026
+</div>
+
+<script>
+// ─── Sprite Animation ───
+const frames = [
+  // Frame 0: idle
+  `<span style="color:#f0f6fc">   /\\</span>\n<span style="color:#f0f6fc">  /</span><span style="color:#79c0ff">○○</span><span style="color:#f0f6fc">\\</span>\n<span style="color:#f0f6fc"> |</span><span style="color:#7d8590">_**_</span><span style="color:#f0f6fc">|</span>\n<span style="color:#f0883e">  ⊿⊿⊿⊿</span>\n<span style="color:#e3b341;font-size:11px;letter-spacing:1px"> Orion</span>`,
+  // Frame 1: thrust
+  `<span style="color:#f0f6fc">   /\\</span>\n<span style="color:#f0f6fc">  /</span><span style="color:#e3b341">●●</span><span style="color:#f0f6fc">\\</span>\n<span style="color:#f0f6fc"> |</span><span style="color:#7d8590">_**_</span><span style="color:#f0f6fc">|</span>\n<span style="color:#f0883e">  ⊿⊿⊿⊿</span><span style="color:#d29922;opacity:0.6">~</span>\n<span style="color:#e3b341;font-size:11px;letter-spacing:1px"> Orion</span>`,
+  // Frame 2: boost
+  `<span style="color:#f0883e;opacity:0.4">  ~ ~</span>\n<span style="color:#f0f6fc">   /\\</span>\n<span style="color:#f0f6fc">  /</span><span style="color:#79c0ff">○○</span><span style="color:#f0f6fc">\\</span>\n<span style="color:#f0f6fc"> |</span><span style="color:#7d8590">_**_</span><span style="color:#f0f6fc">|</span>\n<span style="color:#f0883e"> ~⊿⊿⊿⊿</span><span style="color:#d29922;opacity:0.6">~</span>\n<span style="color:#e3b341;font-size:11px;letter-spacing:1px"> Orion</span>`,
+];
+
+// Idle sequence: mostly frame 0, occasional thrust/boost
+const sequence = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0];
+let seqIndex = 0;
+
+const spriteEl = document.getElementById('anim-sprite');
+const trajectoryEl = document.getElementById('anim-trajectory');
+const distEl = document.getElementById('anim-distance');
+const velEl = document.getElementById('anim-velocity');
+const metEl = document.getElementById('anim-met');
+
+// Simulate distance slowly increasing
+let simDist = 148302;
+let simMet = 134; // minutes
+
+function updateSprite() {
+  const frame = sequence[seqIndex % sequence.length];
+  spriteEl.innerHTML = frames[frame];
+  seqIndex++;
+}
+
+function updateTrajectory() {
+  const totalPath = 28;
+  const progress = Math.min((simDist / 400000) * totalPath, totalPath - 1);
+  const pos = Math.floor(progress);
+
+  let bar = '';
+  bar += '<span style="color:#58a6ff">🌍</span>';
+  bar += '<span style="color:#484f58"> ';
+  for (let i = 0; i < totalPath; i++) {
+    if (i === pos) {
+      bar += '</span><span style="color:#e3b341;font-weight:700">•</span><span style="color:#484f58">';
+    } else {
+      bar += '·';
+    }
+  }
+  bar += ' </span><span style="color:#8b949e">🌑</span>';
+  trajectoryEl.innerHTML = bar;
+}
+
+function updateData() {
+  simDist += Math.floor(Math.random() * 80 + 40);
+  simMet += 1;
+
+  const hours = Math.floor(simMet / 60);
+  const mins = simMet % 60;
+
+  distEl.textContent = simDist.toLocaleString() + ' km';
+  metEl.textContent = `MET ${hours}h ${mins}m`;
+
+  const vel = (2.1 + Math.random() * 0.4).toFixed(1);
+  velEl.textContent = vel + ' km/s';
+
+  updateTrajectory();
+}
+
+// Tick every 800ms for sprite, every 3s for data
+setInterval(updateSprite, 800);
+setInterval(updateData, 3000);
+
+// Initial render
+updateSprite();
+updateTrajectory();
+</script>
+
+</body>
+</html>

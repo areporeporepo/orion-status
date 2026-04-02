@@ -15,10 +15,10 @@ const mockPosition: ArtemisPosition = {
 };
 
 describe("statusline renderer", () => {
-  it("renders exactly 2 lines", () => {
+  it("renders single line", () => {
     const output = renderStatusline(mockPosition, 0);
     const lines = output.split("\n");
-    assert.equal(lines.length, 2);
+    assert.equal(lines.length, 1);
   });
   it("includes distance from Earth", () => {
     const output = renderStatusline(mockPosition, 0);

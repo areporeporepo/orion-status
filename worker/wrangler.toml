@@ -9,3 +9,11 @@ crons = ["*/5 * * * *"]
 [[kv_namespaces]]
 binding = "ARTEMIS_KV"
 id = "81774a0a72994d188ce5b0e3e23a812e"
+
+[[durable_objects.bindings]]
+name = "POLLER"
+class_name = "DsnPoller"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DsnPoller"]

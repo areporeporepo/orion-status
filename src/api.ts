@@ -126,32 +126,33 @@ async function fetchHorizons(): Promise<ArtemisPosition> {
 // So the km counter ticks every render, not every 5s
 const LAUNCH_EPOCH = LAUNCH_TIME.getTime();
 
+// No monotonic locking — interpolation is smooth because we hold cache
+// long enough that we don't re-fetch mid-interpolation cycle
+
 function interpolate(data: ArtemisPosition): ArtemisPosition {
   const now = Date.now();
-  if (data.velocityKmS === 0) return { ...data, missionElapsedMs: Math.max(0, now - LAUNCH_EPOCH) };
+  const met = Math.max(0, now - LAUNCH_EPOCH);
+
+  if (data.velocityKmS === 0) return { ...data, missionElapsedMs: met };
+
+  // Only interpolate distance during phases with clear radial direction
+  if (data.phase === "earth_orbit" || data.phase === "lunar_flyby") {
+    return { ...data, missionElapsedMs: met };
+  }
 
   const dataAge = (now - new Date(data.timestamp).getTime()) / 1000;
   if (dataAge <= 0) return data;
 
-  // Cap interpolation at 10 minutes — beyond that, data is too stale
   const dt = Math.min(dataAge, 600);
   const dKm = data.velocityKmS * dt;
-
-  // Only interpolate distance during phases with clear radial direction
-  // earth_orbit: circling at ~constant distance, lunar_flyby: direction reverses
-  if (data.phase === "earth_orbit" || data.phase === "lunar_flyby") {
-    return { ...data, missionElapsedMs: Math.max(0, now - LAUNCH_EPOCH) };
-  }
 
   const outbound = data.phase === "transit_to_moon";
   const sign = outbound ? 1 : -1;
 
-  return {
-    ...data,
-    distanceEarthKm: Math.max(0, Math.round(data.distanceEarthKm + sign * dKm)),
-    distanceMoonKm: Math.max(0, Math.round(data.distanceMoonKm - sign * dKm)),
-    missionElapsedMs: Math.max(0, now - LAUNCH_EPOCH),
-  };
+  const earthKm = Math.max(0, Math.round(data.distanceEarthKm + sign * dKm));
+  const moonKm = Math.max(0, Math.round(data.distanceMoonKm - sign * dKm));
+
+  return { ...data, distanceEarthKm: earthKm, distanceMoonKm: moonKm, missionElapsedMs: met };
 }
 
 export async function fetchPosition(): Promise<ArtemisPosition> {

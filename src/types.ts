@@ -39,7 +39,7 @@ export const C = {
   silver: "\x1b[38;5;245m",
 } as const;
 
-export const API_URL = "https://artemis.aircloudy.co/position";
+export const API_URL = "https://artemis-api.testa.workers.dev/position";
 export const CACHE_PATH = "/tmp/artemis-track-cache.json";
 export const CACHE_TTL_MS = 30_000;
 

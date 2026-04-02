@@ -1,6 +1,7 @@
 name = "artemis-api"
 main = "src/index.ts"
 compatibility_date = "2026-04-01"
+workers_dev = true
 
 [triggers]
 crons = ["*/5 * * * *"]
@@ -8,7 +9,3 @@ crons = ["*/5 * * * *"]
 [[kv_namespaces]]
 binding = "ARTEMIS_KV"
 id = "81774a0a72994d188ce5b0e3e23a812e"
-
-[[routes]]
-pattern = "artemis.aircloudy.co/*"
-zone_name = "aircloudy.co"

@@ -113,10 +113,13 @@ export async function fetchPosition(): Promise<ArtemisPosition> {
     const res = await fetch(API_URL, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data: ArtemisPosition = await res.json();
-    writeCache(data);
-    return data;
-  } catch {
-    if (cached) return cached.data;
-    return estimatePosition();
-  }
+    // Only use API data if it's not stale — local estimation is better than stale zeros
+    if (!data.stale) {
+      writeCache(data);
+      return data;
+    }
+  } catch {}
+
+  // Prefer local estimation over stale API/cache data
+  return estimatePosition();
 }

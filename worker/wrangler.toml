@@ -1,0 +1,13 @@
+name = "artemis-api"
+main = "src/index.ts"
+compatibility_date = "2026-04-01"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "ARTEMIS_KV"
+id = "TO_BE_FILLED"
+
+[routes]
+pattern = "artemis.aircloudy.co/*"

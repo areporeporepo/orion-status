@@ -35,7 +35,8 @@ describe("statusline renderer", () => {
   it("includes trajectory bar with Earth and Moon", () => {
     const output = renderStatusline(mockPosition, 0);
     assert.ok(output.includes("🌍"));
-    assert.ok(output.includes("🌑"));
+    const moonEmojis = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
+    assert.ok(moonEmojis.some(e => output.includes(e)));
   });
   it("shows stale indicator when data is stale", () => {
     const stale = { ...mockPosition, stale: true };

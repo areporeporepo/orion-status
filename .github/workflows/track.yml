@@ -8,57 +8,105 @@ jobs:
   track:
     runs-on: ubuntu-latest
     steps:
-      - name: Scrape NASA blog + extract telemetry via NIM
+      - name: Fetch NASA livestream captions + blog
+        run: |
+          # Method 1: YouTube live captions via transcript API
+          pip install -q youtube-transcript-api 2>/dev/null
+
+          python3 << 'PYEOF' > /tmp/transcript.txt
+          try:
+              from youtube_transcript_api import YouTubeTranscriptApi
+              # Get last 5 minutes of live captions
+              transcript = YouTubeTranscriptApi.get_transcript("m3kR2KK8TEs", languages=["en"])
+              # Get the last ~50 entries (most recent captions)
+              recent = transcript[-50:] if len(transcript) > 50 else transcript
+              text = " ".join([t["text"] for t in recent])
+              print(text)
+          except Exception as e:
+              print(f"CAPTION_FAIL: {e}")
+          PYEOF
+
+          CAPTIONS=$(cat /tmp/transcript.txt)
+          echo "Captions (${#CAPTIONS} chars): ${CAPTIONS:0:200}..."
+
+          # Method 2: NASA blog as fallback
+          NASA_TEXT=$(curl -s "https://www.nasa.gov/blogs/missions/2026/04/01/live-artemis-ii-launch-day-updates/" \
+            | sed 's/<[^>]*>/ /g' | tr -s ' ' | tail -c 4000 || true)
+
+          # Combine both sources, captions first (more real-time)
+          echo "${CAPTIONS}" > /tmp/combined.txt
+          echo "" >> /tmp/combined.txt
+          echo "${NASA_TEXT}" >> /tmp/combined.txt
+
+          COMBINED=$(cat /tmp/combined.txt | head -c 8000)
+          echo "Combined: ${#COMBINED} chars"
+
+          echo "SOURCE_TEXT<<EOFTXT" >> $GITHUB_ENV
+          echo "$COMBINED" >> $GITHUB_ENV
+          echo "EOFTXT" >> $GITHUB_ENV
+
+      - name: Extract telemetry via NIM
         env:
           NIM_API_KEY: ${{ secrets.NIM_API_KEY }}
+          SOURCE_TEXT: ${{ env.SOURCE_TEXT }}
         run: |
-          # Grab latest NASA mission updates
-          NASA_TEXT=$(curl -s "https://www.nasa.gov/blogs/missions/2026/04/01/live-artemis-ii-launch-day-updates/" \
-            | sed 's/<[^>]*>/ /g' | tr -s ' ' | head -c 6000)
+          python3 << 'PYEOF'
+          import json, os, urllib.request
 
-          echo "Got ${#NASA_TEXT} chars from NASA blog"
+          text = os.environ.get("SOURCE_TEXT", "")[:6000]
+          nim_key = os.environ.get("NIM_API_KEY", "")
 
-          # Also try Space.com live updates
-          SPACE_TEXT=$(curl -s "https://www.space.com/news/live/artemis-2-nasa-moon-mission-launch-updates-april-1-2026" \
-            | sed 's/<[^>]*>/ /g' | tr -s ' ' | head -c 4000)
+          if not nim_key or not text:
+              print("NO_DATA")
+              exit(0)
 
-          COMBINED="${NASA_TEXT}\n\n${SPACE_TEXT}"
+          payload = json.dumps({
+              "model": "nvidia/nemotron-3-nano-30b-a3b",
+              "messages": [{"role": "user", "content": f"""Extract spacecraft telemetry numbers from this NASA Artemis II broadcast text. Look for mentions of distance (miles/km), speed (mph/km), altitude, apogee, or orbit height. Return ONLY JSON: {{"distance_miles":NUMBER_OR_NULL,"speed_mph":NUMBER_OR_NULL,"altitude_miles":NUMBER_OR_NULL}}
 
-          # Send to NIM to extract numbers
-          RESPONSE=$(curl -s https://integrate.api.nvidia.com/v1/chat/completions \
-            -H "Authorization: Bearer $NIM_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "$(python3 -c "
-          import json
-          text = '''${COMBINED}'''[:8000]
-          print(json.dumps({
-            'model': 'nvidia/nemotron-3-nano-30b-a3b',
-            'messages': [{'role': 'user', 'content': 'Extract the LATEST spacecraft telemetry numbers from these NASA Artemis II mission updates. Find distance from Earth (miles or km), speed (mph or km/s), altitude/apogee (miles or km). Return ONLY JSON: {\"distance_miles\":NUMBER_OR_NULL,\"speed_mph\":NUMBER_OR_NULL,\"altitude_miles\":NUMBER_OR_NULL}\n\nText: ' + text}],
-            'max_tokens': 100,
-            'temperature': 0
-          }))
-          ")")
+Text: {text}"""}],
+              "max_tokens": 100,
+              "temperature": 0
+          }).encode()
 
-          echo "NIM response: $RESPONSE"
-          echo "NIM_RESPONSE<<EOF" >> $GITHUB_ENV
-          echo "$RESPONSE" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          req = urllib.request.Request(
+              "https://integrate.api.nvidia.com/v1/chat/completions",
+              data=payload,
+              headers={"Authorization": f"Bearer {nim_key}", "Content-Type": "application/json"}
+          )
+
+          try:
+              with urllib.request.urlopen(req, timeout=15) as resp:
+                  result = json.loads(resp.read())
+                  content = result["choices"][0]["message"]["content"]
+                  print(f"NIM_CONTENT={content}")
+
+                  # Write to env for next step
+                  with open(os.environ["GITHUB_ENV"], "a") as f:
+                      f.write(f"NIM_CONTENT={content}\n")
+          except Exception as e:
+              print(f"NIM_ERROR: {e}")
+              with open(os.environ["GITHUB_ENV"], "a") as f:
+                  f.write("NIM_CONTENT=NO_DATA\n")
+          PYEOF
 
       - name: Parse and push to Cloudflare KV
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           KV_NAMESPACE_ID: "81774a0a72994d188ce5b0e3e23a812e"
+          NIM_CONTENT: ${{ env.NIM_CONTENT }}
         run: |
           TELEMETRY=$(python3 << 'PYEOF'
-          import json, re, sys
+          import json, re, os, sys
           from datetime import datetime, timezone
 
-          response = """${{ env.NIM_RESPONSE }}"""
+          content = os.environ.get("NIM_CONTENT", "")
+          if content == "NO_DATA" or not content:
+              print("NO_DATA")
+              sys.exit(0)
 
           try:
-              d = json.loads(response)
-              content = d.get("choices", [{}])[0].get("message", {}).get("content", "")
               m = re.search(r'\{[^}]+\}', content)
               if not m:
                   print("NO_DATA")
@@ -66,14 +114,14 @@ jobs:
 
               data = json.loads(m.group())
               dist_miles = data.get("distance_miles") or data.get("altitude_miles")
-
               if not dist_miles:
                   print("NO_DATA")
                   sys.exit(0)
 
               dist_km = round(dist_miles * 1.60934)
               moon_km = max(0, round(384400 - dist_km))
-              vel = round((data.get("speed_mph", 0) or 0) * 1.60934 / 3600, 2)
+              speed_mph = data.get("speed_mph", 0) or 0
+              vel = round(speed_mph * 1.60934 / 3600, 2)
               met = int((datetime.now(timezone.utc) - datetime(2026, 4, 1, 22, 35, 0, tzinfo=timezone.utc)).total_seconds() * 1000)
 
               phase = "earth_orbit"
@@ -88,12 +136,11 @@ jobs:
                   "velocityKmS": vel,
                   "missionElapsedMs": met,
                   "phase": phase,
-                  "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                  "source": "nim_blog"
+                  "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
               }
               print(json.dumps(result))
           except Exception as e:
-              print(f"NO_DATA: {e}", file=sys.stderr)
+              print(f"NO_DATA", file=sys.stderr)
               print("NO_DATA")
           PYEOF
           )
@@ -101,12 +148,12 @@ jobs:
           echo "Telemetry: $TELEMETRY"
 
           if [ "$TELEMETRY" != "NO_DATA" ] && [ -n "$TELEMETRY" ]; then
-            curl -s -X PUT \
+            RESULT=$(curl -s -X PUT \
               "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/storage/kv/namespaces/$KV_NAMESPACE_ID/values/position" \
               -H "Authorization: Bearer $CF_API_TOKEN" \
               -H "Content-Type: application/json" \
-              --data "$TELEMETRY"
-            echo "Pushed to KV!"
+              --data "$TELEMETRY")
+            echo "KV response: $RESULT"
           else
-            echo "No telemetry extracted, skipping KV update"
+            echo "No telemetry extracted, skipping"
           fi

@@ -23,6 +23,10 @@ interface Env {
 export class DsnPoller implements DurableObject {
   state: DurableObjectState;
   env: Env;
+  // In-memory counters — no storage ops needed for these
+  tick = 0;
+  fails = 0;
+  lastDsn: (DsnTarget & { timestamp: string }) | null = null;
 
   constructor(state: DurableObjectState, env: Env) {
     this.state = state;
@@ -34,36 +38,32 @@ export class DsnPoller implements DurableObject {
     if (!alarm) {
       await this.state.storage.setAlarm(Date.now() + 1000);
     }
-    return new Response(JSON.stringify({ polling: true }));
+    return new Response(JSON.stringify({ polling: true, tick: this.tick }));
   }
 
   async alarm(): Promise<void> {
-    let delay = 1000;
-    const tick = ((await this.state.storage.get<number>("tick")) ?? 0) + 1;
-    await this.state.storage.put("tick", tick);
+    let delay = 5000; // 5s default — balances freshness vs DO cost
+    this.tick++;
 
     try {
-      // DSN every 5th tick (5s) — matches NASA's exact refresh rate
+      // DSN every 5th tick (25s) — NASA refreshes every 5s but we don't need that granularity
       let latestDsn: DsnTarget | null = null;
-      if (tick % 5 === 0) {
+      if (this.tick % 5 === 0) {
         latestDsn = await fetchDSN();
         if (latestDsn && latestDsn.rangeKm > 0) {
-          await this.env.ARTEMIS_KV.put("dsn", JSON.stringify({
-            ...latestDsn,
-            timestamp: new Date().toISOString(),
-          }), { expirationTtl: 30 });
+          this.lastDsn = { ...latestDsn, timestamp: new Date().toISOString() };
+          await this.env.ARTEMIS_KV.put("dsn", JSON.stringify(this.lastDsn), { expirationTtl: 60 });
         }
       }
 
-      // Horizons every tick (1s) — sequential, stays under concurrency limit
+      // Horizons every tick (5s)
       const horizons = await fetchHorizons();
       if (horizons) {
         const met = Math.max(0, Date.now() - LAUNCH_TIME.getTime());
 
-        // Merge DSN metadata if available (from this tick or KV)
         let source = "Horizons";
         let dsnInfo: Position["dsn"] | undefined;
-        const dsn = latestDsn ?? await this.env.ARTEMIS_KV.get("dsn", "json") as (DsnTarget & { timestamp: string }) | null;
+        const dsn = latestDsn ? { ...latestDsn, timestamp: new Date().toISOString() } : this.lastDsn;
         if (dsn && dsn.rangeKm > 0) {
           source = `Horizons + DSN ${dsn.station}`;
           dsnInfo = { station: dsn.station, dish: dsn.dish, signalDbm: dsn.signalDbm, dataRateKbps: dsn.dataRateKbps };
@@ -83,12 +83,10 @@ export class DsnPoller implements DurableObject {
         await this.env.ARTEMIS_KV.put("position", JSON.stringify(pos), { expirationTtl: 60 });
       }
 
-      // Reset fail counter on success
-      await this.state.storage.delete("fails");
+      this.fails = 0;
     } catch {
-      const fails = ((await this.state.storage.get<number>("fails")) ?? 0) + 1;
-      await this.state.storage.put("fails", fails);
-      delay = Math.min(60_000, 1000 * Math.pow(2, fails));
+      this.fails++;
+      delay = Math.min(60_000, 5000 * Math.pow(2, this.fails));
     }
 
     await this.state.storage.setAlarm(Date.now() + delay);

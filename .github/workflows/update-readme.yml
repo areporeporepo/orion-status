@@ -27,9 +27,8 @@ jobs:
       #    Only secret in GitHub: OP_SERVICE_ACCOUNT_TOKEN
       #    Everything else lives in 1Password — rotate once, propagates everywhere
       - uses: 1password/load-secrets-action@581a835fb51b8e7ec56b71cf2ffddd7e68bb25e0 # v2.0.0
-        with:
-          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           ANTHROPIC_API_KEY: op://CI-CD Secrets/Anthropic API Key (Claude OAuth)/credential
           CONGRESS_API_KEY: op://CI-CD Secrets/Congress.gov API Key/credential
 

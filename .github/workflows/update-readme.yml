@@ -1,0 +1,280 @@
+name: Auto-Update README
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch: {}
+
+# Prevent concurrent runs
+concurrency:
+  group: readme-update
+  cancel-in-progress: true
+
+# Least privilege
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # Pin to full SHA (supply chain hardening)
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # ── 0. Load secrets from 1Password ─────────────────────────
+      #    Only secret in GitHub: OP_SERVICE_ACCOUNT_TOKEN
+      #    Everything else lives in 1Password — rotate once, propagates everywhere
+      - uses: 1password/load-secrets-action/configure@581a835fb51b8e7ec56b71cf2ffddd7e68bb25e0 # v2.0.0
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - uses: 1password/load-secrets-action@581a835fb51b8e7ec56b71cf2ffddd7e68bb25e0 # v2.0.0
+        id: secrets
+        with:
+          export-env: false
+        env:
+          ANTHROPIC_API_KEY: op://CI-CD Secrets/Anthropic API Key (Claude OAuth)/credential
+          CONGRESS_API_KEY: op://CI-CD Secrets/Congress.gov API Key/credential
+
+      # ── 1. Fetch all public API data in parallel ───────────────
+      #    Congress key is optional (placeholder until signup)
+      - name: Fetch EPIC, Congress, Polymarket, Kalshi, USAspending
+        env:
+          CONGRESS_API_KEY: ${{ steps.secrets.outputs.CONGRESS_API_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/data
+
+          # EPIC — latest Earth image
+          curl -sf --max-time 30 "https://epic.gsfc.nasa.gov/api/natural" \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          if data:
+              latest = data[0]
+              date = latest['date'].split(' ')[0].replace('-', '/')
+              latest['image_url'] = f'https://epic.gsfc.nasa.gov/archive/natural/{date}/png/{latest[\"image\"]}.png'
+              json.dump(latest, open('/tmp/data/epic.json','w'), indent=2)
+              print(f'EPIC: {latest[\"date\"]}')
+          else:
+              print('EPIC: no data')
+          " &
+
+          # Congress.gov (optional — needs free key from api.data.gov)
+          if [ -n "${CONGRESS_API_KEY:-}" ] && [[ ! "$CONGRESS_API_KEY" == PLACEHOLDER* ]]; then
+            curl -sf --max-time 30 \
+              "https://api.congress.gov/v3/bill/119?api_key=${CONGRESS_API_KEY}&limit=20&sort=updateDate+desc" \
+              -o /tmp/data/congress_bills.json &
+          fi
+
+          # Polymarket (public, no auth)
+          curl -sf --max-time 30 "https://gamma-api.polymarket.com/events?closed=false&limit=100" \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          relevant = []
+          for evt in data:
+              t = evt.get('title','').lower()
+              if any(kw in t for kw in ['shutdown','debt','ceiling','budget','nasa','spending','default','fiscal','government fund']):
+                  markets = []
+                  for m in evt.get('markets',[])[:3]:
+                      p = m.get('outcomePrices','')
+                      markets.append({
+                          'question': m.get('question',''),
+                          'yes_price': json.loads(p)[0] if p else None,
+                          'volume': float(m.get('volume',0)),
+                          'active': m.get('active',False)
+                      })
+                  relevant.append({'title': evt['title'], 'markets': markets})
+          json.dump(relevant, open('/tmp/data/polymarket.json','w'), indent=2)
+          print(f'Polymarket: {len(relevant)} relevant events')
+          " &
+
+          # Kalshi (public, no auth for reads)
+          curl -sf --max-time 30 "https://api.elections.kalshi.com/trade-api/v2/events?status=open&limit=200" \
+            | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          events = data.get('events', [])
+          relevant = []
+          for evt in events:
+              t = evt.get('title','').lower()
+              if any(kw in t for kw in ['shutdown','debt','ceiling','budget','nasa','spending','default','national debt','balance','government']):
+                  markets = []
+                  for m in evt.get('markets',[])[:5]:
+                      markets.append({
+                          'title': m.get('subtitle', m.get('title','')),
+                          'ticker': m.get('ticker',''),
+                          'yes_bid': m.get('yes_bid'),
+                          'yes_ask': m.get('yes_ask'),
+                          'volume': m.get('volume',0)
+                      })
+                  relevant.append({'title': evt['title'], 'ticker': evt.get('ticker',''), 'markets': markets})
+          json.dump(relevant, open('/tmp/data/kalshi.json','w'), indent=2)
+          print(f'Kalshi: {len(relevant)} relevant events')
+          " &
+
+          # USAspending (public, no auth)
+          curl -sf --max-time 30 "https://api.usaspending.gov/api/v2/agency/080/budgetary_resources/" \
+            -o /tmp/data/usaspending.json &
+
+          # Senate floor today (public RSS)
+          curl -sf --max-time 30 "https://www.congress.gov/rss/senate-floor-today.xml" \
+            -o /tmp/data/senate_floor.xml &
+
+          # House floor today (public RSS)
+          curl -sf --max-time 30 "https://www.congress.gov/rss/house-floor-today.xml" \
+            -o /tmp/data/house_floor.xml &
+
+          wait
+          echo "All fetches complete"
+          ls -la /tmp/data/
+
+      # ── 2. Check if EPIC has a newer image ─────────────────────
+      - name: Update EPIC image if newer
+        run: |
+          set -euo pipefail
+
+          if [ ! -f /tmp/data/epic.json ]; then
+            echo "No EPIC data, skipping"
+            echo "EPIC_UPDATED=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          NEW_ID=$(python3 -c "import json; d=json.load(open('/tmp/data/epic.json')); print(d['identifier'])")
+          CURRENT_ID=$(grep -oP 'Identifier \| `\K[0-9]+' README.md || echo "none")
+
+          echo "Current EPIC: $CURRENT_ID"
+          echo "Latest EPIC:  $NEW_ID"
+
+          if [ "$NEW_ID" != "$CURRENT_ID" ]; then
+            IMAGE_URL=$(python3 -c "import json; d=json.load(open('/tmp/data/epic.json')); print(d['image_url'])")
+            DATE_SLUG=$(python3 -c "import json; d=json.load(open('/tmp/data/epic.json')); print(d['date'].split(' ')[0].replace('-',''))")
+
+            echo "Downloading new EPIC image: $IMAGE_URL"
+            curl -sf --max-time 60 -o "docs/epic-earth-${DATE_SLUG}.png" "$IMAGE_URL"
+
+            # Remove old EPIC images (keep Artemis photo)
+            find docs/ -name "epic-earth-*.png" ! -name "epic-earth-${DATE_SLUG}.png" -delete
+
+            echo "EPIC_UPDATED=true" >> "$GITHUB_ENV"
+            echo "EPIC_FILENAME=epic-earth-${DATE_SLUG}.png" >> "$GITHUB_ENV"
+          else
+            echo "EPIC image unchanged"
+            echo "EPIC_UPDATED=false" >> "$GITHUB_ENV"
+          fi
+
+      # ── 3. Synthesize with Opus 4.6 ────────────────────────────
+      #    ANTHROPIC_API_KEY scoped to this step ONLY
+      - name: Update README via Opus 4.6
+        env:
+          ANTHROPIC_API_KEY: ${{ steps.secrets.outputs.ANTHROPIC_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          # Mask key in logs
+          echo "::add-mask::${ANTHROPIC_API_KEY}"
+
+          python3 << 'PYEOF'
+          import json, os, glob, urllib.request, sys
+
+          api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+          if not api_key:
+              print("::error::ANTHROPIC_API_KEY not set")
+              sys.exit(1)
+
+          # Collect all fetched data
+          data = {}
+          for f in glob.glob('/tmp/data/*.json'):
+              key = os.path.basename(f).replace('.json', '')
+              try:
+                  data[key] = json.load(open(f))
+              except Exception:
+                  pass
+
+          readme = open('README.md').read()
+          epic_updated = os.environ.get('EPIC_UPDATED', 'false')
+          epic_filename = os.environ.get('EPIC_FILENAME', '')
+
+          prompt = f"""You are updating the orion-status README.md with fresh API data.
+
+          RULES:
+          - Only update sections that have NEW data. Do not touch sections where data hasn't changed.
+          - Keep the exact same markdown structure, headers, and formatting.
+          - Update the Congressional Status code block with current session/recess info from floor RSS.
+          - Update prediction market section if there are new active markets for shutdown/debt/NASA.
+          - If EPIC image was updated (epic_updated={epic_updated}), update the EPIC section with new metadata. New filename: {epic_filename}
+          - If USAspending data changed, update the budget table.
+          - Be factual. Only state what the data shows. No editorializing beyond what's already there.
+          - Output ONLY the complete updated README.md content. No commentary, no markdown fences around it.
+
+          CURRENT README:
+          {readme}
+
+          FRESH API DATA:
+          {json.dumps(data, indent=2)[:12000]}
+          """
+
+          body = json.dumps({
+              "model": "claude-opus-4-6-20250415",
+              "max_tokens": 8000,
+              "messages": [{"role": "user", "content": prompt}]
+          }).encode()
+
+          req = urllib.request.Request(
+              "https://api.anthropic.com/v1/messages",
+              data=body,
+              headers={
+                  "x-api-key": api_key,
+                  "anthropic-version": "2023-06-01",
+                  "content-type": "application/json"
+              }
+          )
+
+          try:
+              with urllib.request.urlopen(req, timeout=120) as resp:
+                  result = json.loads(resp.read())
+                  content = result["content"][0]["text"]
+                  with open("README.md", "w") as f:
+                      f.write(content)
+                  print("README updated successfully")
+          except urllib.error.HTTPError as e:
+              # Never print response body — could reflect key in error
+              print(f"::error::Anthropic API returned {e.code}")
+              sys.exit(1)
+          except Exception as e:
+              print(f"::error::API call failed: {type(e).__name__}")
+              sys.exit(1)
+          PYEOF
+
+      # ── 4. Commit and push if changed ──────────────────────────
+      - name: Commit if changed
+        run: |
+          set -euo pipefail
+
+          git config user.name "orion-status[bot]"
+          git config user.email "orion-status[bot]@users.noreply.github.com"
+
+          git add README.md docs/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          if [ "${EPIC_UPDATED:-false}" = "true" ]; then
+            MSG="auto: update EPIC earth image + status"
+          else
+            MSG="auto: update status"
+          fi
+
+          git commit -m "${MSG}
+
+          Updated by Opus 4.6 via GitHub Actions.
+          Sources: EPIC API, Congress.gov, Polymarket, Kalshi, USAspending.
+
+          Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
+
+          git push

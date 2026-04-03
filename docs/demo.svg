@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'JetBrains Mono','Menlo','Consolas',monospace" font-size="13">
+  <defs>
+    <style>
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+      @keyframes pulseGold { 0%,100%{fill:#e3b341} 50%{fill:#f0883e} }
+      @keyframes drift { 0%{transform:translateX(0)} 50%{transform:translateX(6px)} 100%{transform:translateX(0)} }
+      @keyframes thrustFlicker { 0%,100%{opacity:0} 30%{opacity:1} 35%{opacity:0} 70%{opacity:1} 75%{opacity:0} }
+      @keyframes glint { 0%,100%{fill:#58a6ff} 25%{fill:#e3b341} 50%{fill:#58a6ff} }
+      @keyframes countUp1 { 0%{opacity:1} 33%{opacity:1} 34%{opacity:0} }
+      @keyframes countUp2 { 0%{opacity:0} 33%{opacity:0} 34%{opacity:1} 67%{opacity:1} 68%{opacity:0} }
+      @keyframes countUp3 { 0%{opacity:0} 67%{opacity:0} 68%{opacity:1} 100%{opacity:1} }
+      @keyframes diamondMove { 0%{transform:translateX(0)} 100%{transform:translateX(4px)} }
+      @keyframes fadeInOut { 0%,100%{opacity:0.3} 50%{opacity:1} }
+      @keyframes scanline { 0%{transform:translateY(-100%)} 100%{transform:translateY(440px)} }
+      .cursor { animation: blink 1s step-end infinite; }
+      .thrust { animation: thrustFlicker 3s ease-in-out infinite; }
+      .glint { animation: glint 6s ease-in-out infinite; }
+      .drift { animation: drift 4s ease-in-out infinite; }
+      .pulse-gold { animation: pulseGold 2s ease-in-out infinite; }
+      .km1 { animation: countUp1 9s linear infinite; }
+      .km2 { animation: countUp2 9s linear infinite; }
+      .km3 { animation: countUp3 9s linear infinite; }
+      .diamond { animation: diamondMove 9s linear infinite; }
+      .signal { animation: fadeInOut 2s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Terminal window -->
+  <rect width="820" height="440" rx="10" fill="#0d1117"/>
+  <rect width="820" height="36" rx="10" fill="#161b22"/>
+  <rect y="26" width="820" height="10" fill="#161b22"/>
+
+  <!-- Window controls -->
+  <circle cx="20" cy="18" r="6" fill="#f85149"/>
+  <circle cx="40" cy="18" r="6" fill="#d29922"/>
+  <circle cx="60" cy="18" r="6" fill="#3fb950"/>
+  <text x="410" y="22" fill="#7d8590" text-anchor="middle" font-size="12">orion-status --tui</text>
+
+  <!-- Scanline effect -->
+  <rect width="820" height="2" fill="#58a6ff" opacity="0.03">
+    <animateTransform attributeName="transform" type="translate" values="0,-2;0,440" dur="4s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Title bar -->
+  <text x="30" y="68" fill="#e3b341" font-size="11" font-weight="bold" letter-spacing="3">
+    <tspan>&#9556;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9559;</tspan>
+  </text>
+  <text x="30" y="84" fill="#e3b341" font-size="11" font-weight="bold" letter-spacing="3">
+    <tspan>&#9553;</tspan>
+    <tspan fill="#f0f6fc"> A R T E M I S   I I   T R A C K E R </tspan>
+    <tspan fill="#e3b341">&#9553;</tspan>
+  </text>
+  <text x="30" y="100" fill="#e3b341" font-size="11" font-weight="bold" letter-spacing="3">
+    <tspan>&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;</tspan>
+  </text>
+
+  <!-- Trajectory bar -->
+  <g transform="translate(30, 125)">
+    <text y="0" fill="#58a6ff" font-size="14">&#127758;</text>
+    <text x="18" y="0" fill="#484f58" font-size="11">52k</text>
+    <text x="50" y="0" fill="#7d8590" font-size="11">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</text>
+    <g class="diamond">
+      <text x="138" y="0" fill="#e3b341" font-size="13" font-weight="bold" class="pulse-gold">&#9670;</text>
+    </g>
+    <text x="152" y="0" fill="#7d8590" font-size="11">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</text>
+    <text x="345" y="0" fill="#484f58" font-size="11">355k</text>
+    <text x="378" y="0" fill="#8b949e" font-size="14">&#127761;</text>
+    <text x="195" y="16" fill="#e3b341" font-size="10">&#8593; Orion</text>
+  </g>
+
+  <!-- Telemetry data -->
+  <g transform="translate(50, 170)">
+    <text y="0" fill="#7d8590">Distance from Earth:</text>
+    <text x="230" y="0" fill="#e3b341" font-weight="bold">
+      <tspan class="km1">51,888</tspan>
+      <tspan class="km2">51,891</tspan>
+      <tspan class="km3">51,894</tspan>
+      <tspan> km</tspan>
+    </text>
+  </g>
+  <g transform="translate(50, 190)">
+    <text y="0" fill="#7d8590">Distance from Moon:</text>
+    <text x="230" y="0" fill="#79c0ff" font-weight="bold">332,608 km</text>
+  </g>
+  <g transform="translate(50, 210)">
+    <text y="0" fill="#7d8590">Velocity:</text>
+    <text x="230" y="0" fill="#3fb950" font-weight="bold">2.43 km/s</text>
+  </g>
+  <g transform="translate(50, 230)">
+    <text y="0" fill="#7d8590">Source:</text>
+    <text x="230" y="0" fill="#484f58">Horizons + DSN Madrid</text>
+    <circle cx="405" cy="-4" r="3" fill="#3fb950" class="signal"/>
+  </g>
+  <g transform="translate(50, 250)">
+    <text y="0" fill="#7d8590">Mission Elapsed:</text>
+    <text x="230" y="0" fill="#f0f6fc" font-weight="bold">5h 50m 12s</text>
+  </g>
+  <g transform="translate(50, 270)">
+    <text y="0" fill="#7d8590">Phase:</text>
+    <text x="230" y="0" fill="#3fb950" font-weight="bold">transit</text>
+    <text x="290" y="0" fill="#d29922">&#9658;perigee raise burn in 7h 38m</text>
+  </g>
+
+  <!-- Crew -->
+  <g transform="translate(50, 300)">
+    <text y="0" fill="#7d8590">Crew:</text>
+    <text x="70" y="0" fill="#f0f6fc">Reid Wiseman</text>
+    <text x="210" y="0" fill="#484f58">(CDR)</text>
+    <text x="255" y="0" fill="#f0f6fc">&#183; Victor Glover</text>
+    <text x="425" y="0" fill="#484f58">(PLT)</text>
+  </g>
+  <g transform="translate(120, 316)">
+    <text y="0" fill="#f0f6fc">Christina Koch</text>
+    <text x="155" y="0" fill="#484f58">(MS)</text>
+    <text x="200" y="0" fill="#f0f6fc">&#183; Jeremy Hansen</text>
+    <text x="375" y="0" fill="#484f58">(MS)</text>
+  </g>
+
+  <!-- Orion spacecraft sprite (animated) -->
+  <g transform="translate(580, 140)" class="drift" font-size="12">
+    <!-- Solar arrays -->
+    <text x="0" y="0" class="glint">&#9590;&#9472;&#9472;</text>
+    <text x="65" y="0" class="glint">&#9472;&#9472;&#9588;</text>
+    <!-- Body -->
+    <text x="25" y="-30" fill="#8b949e">.&#9472;&#9572;&#9472;.</text>
+    <text x="20" y="-16" fill="#f0f6fc">/</text>
+    <text x="30" y="-16" fill="#79c0ff">&#9675; &#9675;</text>
+    <text x="63" y="-16" fill="#f0f6fc">\</text>
+    <text x="15" y="-2" fill="#f0f6fc">/</text>
+    <text x="25" y="-2" fill="#7d8590">&#183;&#9472;&#9472;&#9472;&#9472;&#9472;&#183;</text>
+    <text x="68" y="-2" fill="#f0f6fc">\</text>
+    <text x="15" y="14" fill="#8b949e">&#9560;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;</text>
+    <text x="25" y="30" fill="#7d8590">&#9584;&#9472;&#9472;&#9472;&#9472;&#9472;&#9583;</text>
+    <!-- Thruster fire -->
+    <g class="thrust">
+      <text x="35" y="28" fill="#f0883e" font-size="11">&#9662;</text>
+      <text x="33" y="42" fill="#f0883e" font-size="9">&#9663;</text>
+    </g>
+    <!-- Label -->
+    <text x="20" y="56" fill="#e3b341" font-size="11" font-weight="bold">Orion</text>
+  </g>
+
+  <!-- Status bar -->
+  <g transform="translate(30, 380)">
+    <text y="0" fill="#484f58" font-size="11">Data: NASA DSN &#183; JPL Horizons &#183; Updated 3s ago</text>
+    <circle cx="340" cy="-4" r="3" fill="#3fb950" class="signal"/>
+  </g>
+  <g transform="translate(30, 400)">
+    <text y="0" fill="#484f58" font-size="11">npm install -g orion-status</text>
+    <rect x="255" y="-10" width="8" height="14" fill="#e3b341" class="cursor"/>
+  </g>
+
+  <!-- Corner accent lines -->
+  <line x1="790" y1="50" x2="790" y2="80" stroke="#e3b341" stroke-width="1" opacity="0.3"/>
+  <line x1="760" y1="50" x2="790" y2="50" stroke="#e3b341" stroke-width="1" opacity="0.3"/>
+  <line x1="30" y1="420" x2="30" y2="410" stroke="#58a6ff" stroke-width="1" opacity="0.3"/>
+  <line x1="30" y1="420" x2="60" y2="420" stroke="#58a6ff" stroke-width="1" opacity="0.3"/>
+</svg>

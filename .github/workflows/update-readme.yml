@@ -244,7 +244,7 @@ jobs:
               if e.code == 429:
                   print("::warning::Opus rate limited, falling back to Sonnet")
                   try:
-                      result = call_api("claude-sonnet-4-6-20250514")
+                      result = call_api("claude-sonnet-4-6")
                       print("Used: claude-sonnet-4-6 (fallback)")
                   except urllib.error.HTTPError as e2:
                       print(f"::error::Sonnet also failed: {e2.code}")

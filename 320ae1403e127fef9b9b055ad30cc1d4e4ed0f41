@@ -1,0 +1,23 @@
+README.md
+  8e79e285c60f396b 6-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "320ae1403e127fef9b9b055ad30cc1d4e4ed0f41",
+  "prompts": {
+    "8e79e285c60f396b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "307a3f19-fd65-4212-8406-890f5ea857e7",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "anh nguyen",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}

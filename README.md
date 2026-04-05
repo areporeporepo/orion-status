@@ -13,15 +13,15 @@
 ---
 
 <p align="center">
-  <img src="docs/art002e-koch-earth.jpg" alt="Christina Koch looking at Earth through Orion's window during Artemis II, April 2, 2026" width="100%"/>
+  <img src="docs/orion-moon-selfie-apr3.jpg" alt="Orion spacecraft with the Moon visible in the background, Artemis II Flight Day 2, April 3, 2026" width="100%"/>
 </p>
 
 <p align="center">
-  <b>"Illuminated in Orion"</b> — NASA astronaut Christina Koch, Artemis II Mission Specialist<br/>
-  April 2, 2026 · Orion spacecraft, en route to the Moon · First woman to journey around the Moon
+  <b>Orion + Moon</b> — solar array camera, Artemis II Flight Day 2<br/>
+  April 3, 2026 · Moon visible behind Orion en route to lunar flyby
 </p>
 
-<sub>NASA handout · Flickr ID 55187055368 · 5568×3712 · source: <a href="https://www.nasa.gov/image-article/illuminated-in-orion/">nasa.gov</a> · <a href="https://www.nasa.gov/gallery/journey-to-the-moon/">Journey to the Moon gallery</a></sub>
+<sub>NASA · iPhone 17 Pro Max · source: NASA social media</sub>
 
 ---
 

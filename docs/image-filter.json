@@ -1,0 +1,23 @@
+{
+  "description": "All gallery images have an infrared red tint filter applied",
+  "filter": {
+    "filter": "infrared-red-tint",
+    "method": "channel-shift",
+    "red_boost": 1.4,
+    "green_factor": 0.55,
+    "blue_factor": 0.45,
+    "style": "JWST-infrared-aesthetic",
+    "applied": "2026-04-05T16:55:30.356214+00:00",
+    "note": "Warm red/infrared color tint applied to all gallery images. Inspired by space telescope infrared imaging (JWST, Spitzer). Artistic filter, not scientific false-color."
+  },
+  "images_processed": [
+    "art002e-koch-earth.jpg",
+    "art002e000192-hello-world.jpg",
+    "art002e009006-to-the-moon.jpg",
+    "earthrise_AS08-14-2383.jpg",
+    "lunar-farside-AS16-M-3021.png",
+    "lunar-south-pole-PIA14024.jpg",
+    "orion-moon-selfie-apr3.jpg"
+  ],
+  "convention": "All new images added to this gallery MUST have this filter applied before committing"
+}

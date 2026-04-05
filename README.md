@@ -13,6 +13,19 @@
 ---
 
 <p align="center">
+  <img src="docs/art002e-koch-earth.jpg" alt="Christina Koch looking at Earth through Orion's window during Artemis II, April 2, 2026" width="100%"/>
+</p>
+
+<p align="center">
+  <b>"Illuminated in Orion"</b> — NASA astronaut Christina Koch, Artemis II Mission Specialist<br/>
+  April 2, 2026 · Orion spacecraft, en route to the Moon · First woman to journey around the Moon
+</p>
+
+<sub>NASA handout · Flickr ID 55187055368 · 5568×3712 · source: <a href="https://www.nasa.gov/image-article/illuminated-in-orion/">nasa.gov</a> · <a href="https://www.nasa.gov/gallery/journey-to-the-moon/">Journey to the Moon gallery</a></sub>
+
+---
+
+<p align="center">
   <img src="docs/epic-earth-20260325.png" alt="Earth from DSCOVR EPIC, March 25, 2026" width="60%"/>
 </p>
 

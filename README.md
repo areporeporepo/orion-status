@@ -40,13 +40,23 @@ MIT
 ---
 
 <p align="center">
-  <img src="docs/earthrise_AS08-14-2383.jpg" alt="Earthrise — Earth rising over the lunar horizon, photographed from Apollo 8 by William Anders, December 24, 1968" width="100%"/>
+  <img src="docs/earthrise_AS08-14-2383.jpg" alt="Earthrise — Apollo 8, December 24, 1968" width="100%"/>
 </p>
-<p align="center"><i> the picture that changed how we see ourselves </i></p>
+
+<sub>Hasselblad 500 EL · 250mm f/5.6 Sonnar · Kodak Ektachrome SO-368 · 70mm film · 4600×4400 (JSC scan) · AS08-14-2383 · William Anders · 1968-12-24 ~16:40 UTC</sub>
+
+---
 
 <p align="center">
-  <b>"Earthrise"</b> — NASA astronaut William Anders, Apollo 8 Lunar Module Pilot<br/>
-  December 24, 1968 · Apollo 8 Command Module, lunar orbit · Earth rising over the lunar horizon
+  <img src="docs/lunar-farside-AS16-M-3021.png" alt="Lunar far side — Apollo 16 Metric Camera, April 1972" width="100%"/>
 </p>
 
-<sub>Hasselblad 500 EL · 250mm f/5.6 Sonnar · Kodak Ektachrome SO-368 · 70mm film · 4600×4400 (JSC scan) · AS08-14-2383 · 1968-12-24 ~16:40 UTC</sub>
+<sub>Fairchild Metric Camera · 76.2mm · Type 3400 B&W film · 4048×4048 (ASU scan) · AS16-M-3021 · Apollo 16 trans-Earth coast · 1972-04</sub>
+
+---
+
+<p align="center">
+  <img src="docs/lunar-south-pole-PIA14024.jpg" alt="Lunar south pole — LRO LROC mosaic" width="80%"/>
+</p>
+
+<sub>LROC WAC mosaic · 100 m/pixel · 1242×1242 · PIA14024 · Lunar Reconnaissance Orbiter · Shackleton crater visible at center · 2009–2011</sub>

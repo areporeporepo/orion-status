@@ -23,16 +23,8 @@ MIT
 
 ---
 
-### Test A: Animated GIF slideshow (4MB)
-
 <p align="center">
-  <img src="docs/gallery-slideshow.gif" alt="Photo gallery slideshow" width="100%"/>
-</p>
-
-### Test B: SVG crossfade (291KB)
-
-<p align="center">
-  <img src="docs/gallery-slideshow.svg" alt="Photo gallery slideshow" width="100%"/>
+  <img src="docs/gallery-slideshow.svg" alt="Photo gallery — crossfade slideshow with metadata" width="100%"/>
 </p>
 
 ---

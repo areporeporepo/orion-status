@@ -3,12 +3,16 @@
 Real-time Artemis II tracker for your terminal.
 
 <p align="center">
-  <video src="earthrise.mp4" autoplay loop muted playsinline width="100%" aria-label="Earthrise — JAXA Kaguya HDTV, April 2008">
-    <img src="earthrise.gif" alt="Earthrise — JAXA Kaguya HDTV, April 2008" width="100%"/>
-  </video>
+  <img src="docs/art002e000192-hello-world.jpg" alt="Earth from Orion — Artemis II, April 2, 2026" width="100%"/>
 </p>
 
-<sub>JAXA/NHK Kaguya (SELENE) HDTV — real Earthrise from lunar orbit, April 2008</sub>
+<sub>NASA Nikon D5 · 22mm f/4.0 · ¼s ISO 51200 · <a href="https://www.nasa.gov/image-article/hello-world/">art002e000192</a> · Artemis II · April 3, 2026</sub>
+
+<p align="center">
+  <img src="docs/art002e009006-to-the-moon.jpg" alt="The Moon from Orion — Artemis II Flight Day 4, April 4, 2026" width="100%"/>
+</p>
+
+<sub>NASA Nikon D5 · 400mm f/4.5-5.6 · 1/640s f/18 ISO 500 · <a href="https://www.nasa.gov/image-detail/amf-art002e009006/">art002e009006</a> · Artemis II Flight Day 4 · April 4, 2026</sub>
 
 <p align="center">
   <img src="docs/demo.gif" alt="orion-status live demo" width="100%"/>

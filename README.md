@@ -1,6 +1,5 @@
 ## orion-status
-
-Real-time lunar mission tracker for your claude. Artemis II has returned (🌊 splashdown 2026-04-11) — now counting down to **Artemis III**. See [`docs/schedule.md`](docs/schedule.md) for the full space schedule until launch.
+[`docs/schedule.md`](docs/schedule.md) for the full space schedule until launch.
 
 <p align="center">
   <img src="docs/starship-propellant-transfer.jpg" alt="SpaceX Starship tanker transferring propellant to Starship depot in LEO" width="100%"/>

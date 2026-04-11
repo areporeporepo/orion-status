@@ -17,6 +17,16 @@
     "target_file": "earthrise-earthset-art002.mp4",
     "note": "Warm, bright res-light CSS filter applied to the Artemis II earthrise/earthset hero video."
   },
+  "gif_filter": {
+    "filter": "infrared-red-tint-baked",
+    "method": "ffmpeg-colorchannelmixer",
+    "ffmpeg": "colorchannelmixer=rr=1.4:gg=0.55:bb=0.45",
+    "target_file": "starship-refuel-loop.gif",
+    "source": "https://www.youtube.com/watch?v=kNKLQr5nLm8 (DeepSpaceCourier, 'Orbital waltz of the SpaceX Starships')",
+    "slice": "80-89s",
+    "encode": "fps=10, width=560, max_colors=64, bayer dither",
+    "note": "Red tint baked into GIF frames at encode time (not a CSS filter). Loop shows two Starships approaching for aft-to-aft docking in LEO for propellant transfer."
+  },
   "images_processed": [
     "art002e-koch-earth.jpg",
     "art002e000192-hello-world.jpg",

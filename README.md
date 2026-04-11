@@ -2,10 +2,10 @@
 [`docs/schedule.md`](docs/schedule.md) for the full space schedule until launch.
 
 <p align="center">
-  <img src="docs/starship-propellant-transfer.jpg" alt="SpaceX Starship tanker transferring propellant to Starship depot in LEO" width="100%"/>
+  <img src="docs/starship-refuel-loop.gif" alt="Two SpaceX Starships approaching for aft-to-aft docking in LEO for propellant transfer" width="100%"/>
 </p>
 
-<sub>NASA/SpaceX artist concept — a Starship tanker (bottom) transferring propellant to a Starship depot (top) in low Earth orbit · the single highest-stakes pass/fail test in the entire Artemis stack · vehicle-to-vehicle cryogenic propellant transfer at 100+ ton scale has never been done · per <a href="https://oig.nasa.gov/wp-content/uploads/2026/03/final-report-ig-26-004-nasas-management-of-the-human-landing-system-contracts.pdf">NASA OIG IG-26-004 (Mar 2026)</a> it is "one of the most significant technical challenges" facing the program · <b>infrared-red-tint filter</b></sub>
+<sub>Two Starships approaching for aft-to-aft docking in LEO for orbital propellant transfer — the single highest-stakes pass/fail test in the entire Artemis stack. Vehicle-to-vehicle cryogenic transfer at 100+ ton scale has never been done; per <a href="https://oig.nasa.gov/wp-content/uploads/2026/03/final-report-ig-26-004-nasas-management-of-the-human-landing-system-contracts.pdf">NASA OIG IG-26-004 (Mar 2026)</a> it is "one of the most significant technical challenges" facing the program. Animation by <a href="https://www.youtube.com/watch?v=kNKLQr5nLm8">DeepSpaceCourier</a> (fan render, not official) · <b>infrared-red-tint filter baked in</b></sub>
 
 <p align="center">
   <img src="docs/demo.gif" alt="orion-status live demo" width="100%"/>

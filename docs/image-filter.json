@@ -22,10 +22,10 @@
     "method": "ffmpeg-colorchannelmixer",
     "ffmpeg": "colorchannelmixer=rr=1.4:gg=0.55:bb=0.45",
     "target_file": "starship-spine-to-spine.gif",
-    "source": "NASA/SpaceX render (Nov 20, 2024): https://www.nasa.gov/wp-content/uploads/2024/11/11-14-24-fuel-depot.jpg from https://www.nasa.gov/humans-in-space/nasa-spacex-illustrate-key-moments-of-artemis-lunar-lander-mission/",
-    "motion": "Ken-Burns slow zoom/pan over 6s (static source, no NASA motion version available)",
+    "source": "Concept render of side-by-side leeward-to-leeward propellant transfer; provenance unverified. NOT the NASA Nov-2024 fuel-depot.jpg (https://www.nasa.gov/wp-content/uploads/2024/11/11-14-24-fuel-depot.jpg), which depicts an in-line tanker-below-depot config. Geometry basis: SpaceX Starship V3 leeward docking drogues — https://www.spacex.com/updates/starship-v3",
+    "motion": "Ken-Burns slow zoom/pan over 6s (static source render)",
     "encode": "fps=10, 60 frames, 560x293, max_colors=32, bayer dither scale=5",
-    "note": "Red tint baked into GIF frames at encode time. Depicts two Starships in side-by-side spine-to-spine (leeward-to-leeward) LEO docking for propellant transfer — current (2025-2026) NASA/SpaceX architecture baseline, verified across 3 independent AI research passes. Replaces earlier aft-to-aft fan render (docs/starship-refuel-loop.gif), which was SpaceX's discounted ~2021 concept.",
+    "note": "Red tint baked into GIF frames at encode time. Depicts two Starships in side-by-side leeward-to-leeward (spine-to-spine) LEO docking for propellant transfer — geometry confirmed by SpaceX Starship V3 hardware (four leeward docking drogues, revealed May 2026). Replaces earlier aft-to-aft fan render (docs/starship-refuel-loop.gif), SpaceX's discounted ~2021 concept.",
     "historical_gif": {
       "target_file": "starship-refuel-loop.gif",
       "status": "historical / outdated geometry",

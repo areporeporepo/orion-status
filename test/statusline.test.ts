@@ -4,6 +4,9 @@ import assert from "node:assert/strict";
 import { renderStatusline } from "../src/statusline.ts";
 import type { ArtemisPosition } from "../src/types.ts";
 
+// renderStatusline now ignores live telemetry (Artemis II is complete) and is
+// driven by wall-clock vs ARTEMIS_III_LAUNCH_TARGET. The mock only needs to
+// satisfy the ArtemisPosition type.
 const mockPosition: ArtemisPosition = {
   distanceEarthKm: 148302,
   distanceMoonKm: 236098,
@@ -20,27 +23,25 @@ describe("statusline renderer", () => {
     const lines = output.split("\n");
     assert.equal(lines.length, 1);
   });
-  it("includes distance from Earth", () => {
-    const output = renderStatusline(mockPosition);
-    assert.ok(output.includes("148,302"));
-  });
-  it("includes Orion rocket emoji", () => {
+  it("includes the rocket emoji", () => {
     const output = renderStatusline(mockPosition);
     assert.ok(output.includes("🚀"));
   });
-  it("includes mission elapsed time", () => {
+  it("labels the current mission as Artemis III", () => {
     const output = renderStatusline(mockPosition);
-    assert.ok(output.includes("2h 14m"));
+    assert.ok(output.includes("Artemis III"));
   });
-  it("includes trajectory bar with Earth and Moon", () => {
+  it("shows a T-minus or L-plus countdown", () => {
     const output = renderStatusline(mockPosition);
-    assert.ok(output.includes("🌍"));
-    const moonEmojis = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
-    assert.ok(moonEmojis.some(e => output.includes(e)));
+    assert.match(output, /T-|L\+/);
   });
-  it("shows stale indicator when data is stale", () => {
-    const stale = { ...mockPosition, stale: true };
-    const output = renderStatusline(stale);
-    assert.ok(output.includes("~"));
+  it("shows the next milestone with a ▸ marker", () => {
+    const output = renderStatusline(mockPosition);
+    assert.ok(output.includes("▸"));
+  });
+  it("keeps an Artemis II completion tag", () => {
+    const output = renderStatusline(mockPosition);
+    assert.ok(output.includes("Artemis II"));
+    assert.ok(output.includes("2026-04-10"));
   });
 });

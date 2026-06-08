@@ -1,0 +1,22 @@
+docs/image-filter.json
+  s_13fefc4a3a5736::t_24b249df24442d 25-26,28
+README.md
+  s_13fefc4a3a5736::t_4a5c4484bdd238 8
+  s_13fefc4a3a5736::t_975abc792609b7 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "8746fc13a46517f5881479e3782bcacd04909a37",
+  "prompts": {},
+  "sessions": {
+    "s_13fefc4a3a5736": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a05f4f72-0fed-4687-be01-eb2b943f3a0b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "anh nguyen <29374105+areporeporepo@users.noreply.github.com>"
+    }
+  }
+}

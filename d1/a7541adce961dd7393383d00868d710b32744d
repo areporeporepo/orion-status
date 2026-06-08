@@ -1,0 +1,23 @@
+test/statusline.test.ts
+  s_13fefc4a3a5736::t_bf4d279729b817 7-9,26,28,30,32,34,36,38,40,42-45
+src/types.ts
+  s_13fefc4a3a5736::t_9acf70def0af27 18-24,57-59,61-68
+src/statusline.ts
+  s_13fefc4a3a5736::t_9acf70def0af27 1-6,9-15,24-44,47-60,62-63,65-66,69,72-90,92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "d1a7541adce961dd7393383d00868d710b32744d",
+  "prompts": {},
+  "sessions": {
+    "s_13fefc4a3a5736": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a05f4f72-0fed-4687-be01-eb2b943f3a0b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "anh nguyen <29374105+areporeporepo@users.noreply.github.com>"
+    }
+  }
+}

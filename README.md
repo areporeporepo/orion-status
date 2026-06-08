@@ -2,9 +2,10 @@
 [`docs/schedule.md`](docs/schedule.md) for the full space schedule until launch.
 
 <p align="center">
+  <img src="docs/starship-spine-to-spine.gif" alt="Two SpaceX Starships in side-by-side spine-to-spine (leeward-to-leeward) docking configuration for orbital propellant transfer (NASA/SpaceX render, Nov 20, 2024)" width="100%"/>
 </p>
 
-<sub>Two Starships approaching for aft-to-aft docking in LEO for orbital propellant transfer — the single highest-stakes pass/fail test in the entire Artemis stack. Vehicle-to-vehicle cryogenic transfer at 100+ ton scale has never been done; per <a href="https://oig.nasa.gov/wp-content/uploads/2026/03/final-report-ig-26-004-nasas-management-of-the-human-landing-system-contracts.pdf">NASA OIG IG-26-004 (Mar 2026)</a> it is "one of the most significant technical challenges" facing the program. Animation by <a href="https://www.youtube.com/watch?v=kNKLQr5nLm8">DeepSpaceCourier</a> (fan render, not official) · <b>infrared-red-tint filter baked in</b></sub>
+<sub>Two Starships in <b>side-by-side, spine-to-spine (leeward-to-leeward)</b> docking for orbital propellant transfer — the single highest-stakes pass/fail test in the entire Artemis stack. The bare stainless leeward sides face each other so TPS tiles stay outward; QD panels sit ~2.5 m above the engine skirt and carry LOX, LCH₄, N₂, He, power, and fiber. Transfer is driven by RCS ullage + pressure differential — no mechanical pumps. Vehicle-to-vehicle cryogenic transfer at 100+ ton scale has never been done; per <a href="https://oig.nasa.gov/wp-content/uploads/2026/03/final-report-ig-26-004-nasas-management-of-the-human-landing-system-contracts.pdf">NASA OIG IG-26-004 (Mar 2026)</a> it is "one of the most significant technical challenges" facing the program. Post-<a href="https://www.nasa.gov/directorates/esdmd/nasa-strengthens-artemis-adds-mission-refines-overall-architecture/">Feb 2026 architecture restructure</a>, Artemis III is now a mid-2027 LEO rendezvous/docking demo; Artemis IV (early 2028) is the first crewed landing. Source: <a href="https://www.nasa.gov/humans-in-space/nasa-spacex-illustrate-key-moments-of-artemis-lunar-lander-mission/">NASA/SpaceX render</a> (Nov 20, 2024), slow Ken-Burns pass · <b>infrared-red-tint filter baked in</b></sub>
 
 <p align="center">
   <img src="docs/demo.gif" alt="orion-status live demo" width="100%"/>

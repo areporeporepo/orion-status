@@ -21,11 +21,17 @@
     "filter": "infrared-red-tint-baked",
     "method": "ffmpeg-colorchannelmixer",
     "ffmpeg": "colorchannelmixer=rr=1.4:gg=0.55:bb=0.45",
-    "target_file": "starship-refuel-loop.gif",
-    "source": "https://www.youtube.com/watch?v=kNKLQr5nLm8 (DeepSpaceCourier, 'Orbital waltz of the SpaceX Starships')",
-    "slice": "80-89s",
-    "encode": "fps=10, width=560, max_colors=64, bayer dither",
-    "note": "Red tint baked into GIF frames at encode time (not a CSS filter). Loop shows two Starships approaching for aft-to-aft docking in LEO for propellant transfer."
+    "target_file": "starship-spine-to-spine.gif",
+    "source": "NASA/SpaceX render (Nov 20, 2024): https://www.nasa.gov/wp-content/uploads/2024/11/11-14-24-fuel-depot.jpg from https://www.nasa.gov/humans-in-space/nasa-spacex-illustrate-key-moments-of-artemis-lunar-lander-mission/",
+    "motion": "Ken-Burns slow zoom/pan over 6s (static source, no NASA motion version available)",
+    "encode": "fps=10, 60 frames, 560x293, max_colors=32, bayer dither scale=5",
+    "note": "Red tint baked into GIF frames at encode time. Depicts two Starships in side-by-side spine-to-spine (leeward-to-leeward) LEO docking for propellant transfer — current (2025-2026) NASA/SpaceX architecture baseline, verified across 3 independent AI research passes. Replaces earlier aft-to-aft fan render (docs/starship-refuel-loop.gif), which was SpaceX's discounted ~2021 concept.",
+    "historical_gif": {
+      "target_file": "starship-refuel-loop.gif",
+      "status": "historical / outdated geometry",
+      "source": "https://www.youtube.com/watch?v=kNKLQr5nLm8 (DeepSpaceCourier, 'Orbital waltz of the SpaceX Starships')",
+      "note": "Kept in repo for reference; depicts aft-to-aft concept abandoned ~2021"
+    }
   },
   "images_processed": [
     "art002e-koch-earth.jpg",
@@ -35,7 +41,8 @@
     "lunar-farside-AS16-M-3021.png",
     "lunar-south-pole-PIA14024.jpg",
     "orion-moon-selfie-apr3.jpg",
-    "starship-propellant-transfer.jpg"
+    "starship-propellant-transfer.jpg",
+    "starship-spine-to-spine.jpg"
   ],
   "convention": "All new images added to this gallery MUST have this filter applied before committing"
 }

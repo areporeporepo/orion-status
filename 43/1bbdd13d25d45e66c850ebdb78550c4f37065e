@@ -1,0 +1,24 @@
+docs/image-filter.json
+  a8d7b140999f44cd 20-29
+README.md
+  a8d7b140999f44cd 5,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "431bbdd13d25d45e66c850ebdb78550c4f37065e",
+  "prompts": {
+    "a8d7b140999f44cd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0c27386f-4c5e-4508-86aa-397eff6d2476",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "anh nguyen",
+      "total_additions": 4936,
+      "total_deletions": 4,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    }
+  }
+}

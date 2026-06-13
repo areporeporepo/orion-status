@@ -1,0 +1,23 @@
+docs/schedule.md
+  s_73fe95b5a099f0::t_c91253ee1ce1f8 11,85-86,107
+README.md
+  s_73fe95b5a099f0::t_c91253ee1ce1f8 5,8
+docs/image-filter.json
+  s_73fe95b5a099f0::t_c91253ee1ce1f8 25,28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "4d157216ca5befa50db826f3ada7666fdd6663ad",
+  "prompts": {},
+  "sessions": {
+    "s_73fe95b5a099f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "57fb92c5-70be-4741-99e3-5f993da8abc5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "anh nguyen <29374105+areporeporepo@users.noreply.github.com>"
+    }
+  }
+}

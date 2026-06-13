@@ -22,10 +22,10 @@
     "method": "ffmpeg-colorchannelmixer",
     "ffmpeg": "colorchannelmixer=rr=1.4:gg=0.55:bb=0.45",
     "target_file": "starship-v3-prop-transfer.gif",
-    "source": "SpaceX official Starship V3 propellant-transfer render — https://www.spacex.com/updates/starship-v3 (CMS asset Prop_Transfer_4K, https://sxcontent9668.azureedge.us/cms-assets/assets/Prop_Transfer_4_K_83ce127002.mp4). Depicts two Starship V3 vehicles docked side-by-side, leeward-to-leeward, in LEO. © SpaceX; used here editorially with red-tint filter applied.",
+    "source": "SPCX official Starship V3 propellant-transfer render — https://www.spacex.com/updates/starship-v3 (CMS asset Prop_Transfer_4K, https://sxcontent9668.azureedge.us/cms-assets/assets/Prop_Transfer_4_K_83ce127002.mp4). Depicts two Starship V3 vehicles docked side-by-side, leeward-to-leeward, in LEO. © SPCX; used here editorially with red-tint filter applied.",
     "motion": "Native render motion — docking sequence, source segment 16.5s–24.5s",
     "encode": "ffmpeg -ss 16.5 -t 8, fps=10, 80 frames, scale=560, max_colors=48, bayer dither scale=5, colorchannelmixer rr=1.4:gg=0.55:bb=0.45",
-    "note": "Red tint baked into GIF frames at encode time. Real SpaceX V3 render (not a fan/AI render). Poster still: starship-v3-prop-transfer.jpg (frame ~t+24s). Replaced earlier propellant-transfer assets (starship-spine-to-spine.gif/.jpg with unverified provenance, and the aft-to-aft fan render starship-refuel-loop.gif), which were deleted in cleanup."
+    "note": "Red tint baked into GIF frames at encode time. Real SPCX V3 render (not a fan/AI render). Poster still: starship-v3-prop-transfer.jpg (frame ~t+24s). Replaced earlier propellant-transfer assets (starship-spine-to-spine.gif/.jpg with unverified provenance, and the aft-to-aft fan render starship-refuel-loop.gif), which were deleted in cleanup."
   },
   "images_processed": [
     "art002e-koch-earth.jpg",

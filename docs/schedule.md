@@ -8,7 +8,7 @@
 
 ## 🎯 The ONE thing that matters: Starship orbital refilling
 
-**SpaceX Starship vehicle-to-vehicle cryogenic propellant transfer demo** is the single most consequential event in this window. Claude, Gemini 3.1 Pro, and Codex/GPT-5.4 converged on this independently.
+**SPCX Starship vehicle-to-vehicle cryogenic propellant transfer demo** is the single most consequential event in this window. Claude, Gemini 3.1 Pro, and Codex/GPT-5.4 converged on this independently.
 
 ### Why it's the linchpin
 
@@ -82,8 +82,8 @@ Rename the terminal status line to **`HLS Critical Path`** or **`Starship Refuel
 | **Apr 16, 2026** | [Blue Origin New Glenn NG-3](https://www.blueorigin.com/news/new-glenn-3-to-launch-ast-spacemobile-bluebird-satellite) | AST SpaceMobile BlueBird 7. First booster reuse (NG-2 booster flew Nov 13, 2025). LC-36 CCSFS. |
 | **NET Apr 2026** | [Boeing Starliner-1](https://en.wikipedia.org/wiki/Boeing_Starliner-1) | **Uncrewed cargo**, not crewed. Return-to-flight after 2024 CFT anomalies. |
 | Late 2026 | Boeing Starliner next crewed flight | If Starliner-1 succeeds, Boeing's second operational crewed flight. |
-| Currently on ISS | SpaceX Crew-12 | Launched Feb 2026. |
-| Late 2026 | SpaceX Crew-13 | Routine rotation. |
+| Currently on ISS | SPCX Crew-12 | Launched Feb 2026. |
+| Late 2026 | SPCX Crew-13 | Routine rotation. |
 | **NET Jan 2027** | [Axiom Ax-5](https://www.nasa.gov/news-release/nasa-selects-axiom-space-for-fifth-private-mission-to-space-station/) | First private astronaut mission since 2025 — no Ax missions in 2026. KSC launch, up to 14 days docked. |
 | TBD 2027 | Axiom Ax-6 | Mission order still being finalized by NASA. |
 
@@ -104,7 +104,7 @@ Rename the terminal status line to **`HLS Critical Path`** or **`Starship Refuel
 2. **HLS milestones** — KDP-C, CDR, uncrewed demo readiness reviews
 3. **NASA Artemis schedule updates** from HQ briefings (monthly)
 4. **NASA OIG semiannual Artemis reports** — most honest public source on schedule reality
-5. **SpaceX launch manifest** — Starbase ops cadence
+5. **SPCX launch manifest** — Starbase ops cadence
 6. **AxEMU suit test reports** from Axiom + JSC
 
 ---

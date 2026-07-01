@@ -238,14 +238,14 @@ jobs:
 
           # Try Opus first, fall back to Sonnet on persistent 429
           try:
-              result = call_api("claude-opus-4-6")
-              print("Used: claude-opus-4-6")
+              result = call_api("claude-opus-4-8")
+              print("Used: claude-opus-4-8")
           except urllib.error.HTTPError as e:
               if e.code == 429:
                   print("::warning::Opus rate limited, falling back to Sonnet")
                   try:
-                      result = call_api("claude-sonnet-4-6")
-                      print("Used: claude-sonnet-4-6 (fallback)")
+                      result = call_api("claude-sonnet-5")
+                      print("Used: claude-sonnet-5 (fallback)")
                   except urllib.error.HTTPError as e2:
                       print(f"::error::Sonnet also failed: {e2.code}")
                       sys.exit(1)
